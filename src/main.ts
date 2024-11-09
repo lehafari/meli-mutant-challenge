@@ -32,7 +32,7 @@ async function bootstrap() {
   // Swagger
   if (env === 'development') {
     const options = new DocumentBuilder()
-      .setTitle('Missions API')
+      .setTitle('Mutant API')
       .addBearerAuth()
       .build();
     const document = SwaggerModule.createDocument(app, options);
