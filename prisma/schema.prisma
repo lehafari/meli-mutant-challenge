@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model DnaSequence {
+  id        String   @id @default(uuid())
+  sequence  String[]
+  isMutant  Boolean
+  hash      String   @unique
+  createdAt DateTime @default(now())
+
+  sequenceSize   Int // Tamaño de la matriz (NxN)
+  mutantPatterns Int // Número de patrones mutantes encontrados
+  processingTime Float? // Tiempo de procesamiento en millisegundos
+
+  // Contadores de bases nitrogenadas
+  countA Int
+  countC Int
+  countG Int
+  countT Int
+
+  // Patrones encontrados
+  horizontalPatterns Int // Número de patrones horizontales
+  verticalPatterns   Int // Número de patrones verticales
+  diagonalPatterns   Int // Número de patrones diagonales
+
+  @@index([isMutant])
+  @@index([hash])
+}
+
+model Statistics {
+  id             String @id @default(uuid())
+  totalSequences Int    @default(0) // Total de secuencias analizadas
+  mutantCount    Int    @default(0) // Total de mutantes encontrados
+  humanCount     Int    @default(0) // Total de humanos encontrados
+  ratio          Float  @default(0) // Ratio mutantes/humanos
+
+  // Promedios
+  avgProcessingTime Float @default(0) // Tiempo promedio de procesamiento
+  avgMutantPatterns Float @default(0) // Promedio de patrones por mutante
+
+  // Distribución de patrones
+  avgHorizontalPatterns Float @default(0)
+  avgVerticalPatterns   Float @default(0)
+  avgDiagonalPatterns   Float @default(0)
+
+  // Distribución de bases nitrogenadas
+  avgBaseA Float @default(0)
+  avgBaseC Float @default(0)
+  avgBaseG Float @default(0)
+  avgBaseT Float @default(0)
+
+  // Métricas temporales
+  lastUpdated DateTime @updatedAt
+
+  // Récords
+  fastestProcessing Float? // Tiempo de procesamiento más rápido
+  slowestProcessing Float? // Tiempo de procesamiento más lento
+  maxMutantPatterns Int    @default(0) // Máximo número de patrones encontrados
+
+  @@map("statistics")
+}
